@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Nov 29 16:40:32 2021
-
-@author: beatrice kemboi
-"""
 
 #Importing and downloading Natural Langauge Processing tool kits 
 import nltk
