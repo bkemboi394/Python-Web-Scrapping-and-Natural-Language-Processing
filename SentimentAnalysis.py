@@ -86,16 +86,16 @@ for i,url in enumerate(URLs):
                 
          
 
-##building a vocabulary of acceptable ADJECTIVES found in WordNet
-    vocab = []
+##Building a vocabulary of acceptable ADJECTIVES found in WordNet
+    adj_vocab = []
     with open("wordnetAdj.txt") as WordNetinputfile:
          for line in WordNetinputfile:
             newTerm = line.split()
-            vocab.append(newTerm[0])
+            adj_vocab.append(newTerm[0])
     WordNetinputfile.close()
     
     
-#building a vocabulary of acceptable ADVERBS found in WordNet
+#Building a vocabulary of acceptable ADVERBS found in WordNet
     # with open("wordnetAdv.txt") as WordNetinputfile:
     #      for line in WordNetinputfile:
     #         newTerm = line.split()
@@ -104,7 +104,7 @@ for i,url in enumerate(URLs):
 
 
     
-#Limiting our Reviews to just valid words (defined by WordNet)
+#Limiting reviews to just valid words as per adj_vocab from above
     validated_reviews = []
     for review in alphalowercase_reviews:
         valid_review = []
