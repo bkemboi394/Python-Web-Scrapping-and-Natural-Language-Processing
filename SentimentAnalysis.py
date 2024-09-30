@@ -121,11 +121,7 @@ for i,url in enumerate(URLs):
     sia = SentimentIntensityAnalyzer()
     reviews_sentiment = []
     
-    Vpos_reviews_perpage = 0
-    Pos_reviews_perpage = 0
-    Neg_reviews_perpage = 0
-    Vneg_reviews_perpage = 0
-    Neu_reviews_perpage = 0
+    Vpos_reviews_perpage, Pos_reviews_perpage, Neg_reviews_perpage, Vneg_reviews_perpage, Neu_reviews_perpage = 0,0,0,0,0
     
     for review_number, review in enumerate(validated_reviews):
         
