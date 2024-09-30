@@ -1,181 +1,148 @@
 # -*- coding: utf-8 -*-
 
-#Importing and downloading Natural Langauge Processing tool kits 
+# Importing necessary modules
 import nltk
-nltk.download("all") #selects the entire set of book resources
-from nltk import word_tokenize
-from nltk.sentiment import SentimentIntensityAnalyzer
-
-#Importing webscraping modules and libraries
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlencode
-
-#Others
+from nltk import word_tokenize
+from nltk.sentiment import SentimentIntensityAnalyzer
 import string
 
-Product = "Apple AirPods Pro (2nd Generation) Wireless Earbuds".upper()
-print("SENTIMENT ANALYSIS OF", Product,"AMAZON'S REVIEWS\n")
+# Function to download NLTK resources
+def download_nltk_resources():
+    nltk.download("all")
 
-#Number of urls depends on how many pages of review a product has so far
-url1= "https://www.amazon.com/Apple-Generation-Cancelling-Personalized-Customizable/product-reviews/B0BDHWDR12/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews"
-url2 = "https://www.amazon.com/Apple-Generation-Cancelling-Personalized-Customizable/product-reviews/B0BDHWDR12/ref=cm_cr_arp_d_paging_btm_next_2?ie=UTF8&reviewerType=all_reviews&pageNumber=2"
-url3 = "https://www.amazon.com/Apple-Generation-Cancelling-Personalized-Customizable/product-reviews/B0BDHWDR12/ref=cm_cr_getr_d_paging_btm_next_3?ie=UTF8&reviewerType=all_reviews&pageNumber=3"
-url4 = "https://www.amazon.com/Apple-Generation-Cancelling-Personalized-Customizable/product-reviews/B0BDHWDR12/ref=cm_cr_getr_d_paging_btm_next_4?ie=UTF8&reviewerType=all_reviews&pageNumber=4"
-url5 = "https://www.amazon.com/Apple-Generation-Cancelling-Personalized-Customizable/product-reviews/B0BDHWDR12/ref=cm_cr_getr_d_paging_btm_next_5?ie=UTF8&reviewerType=all_reviews&pageNumber=5"
-url6 = "https://www.amazon.com/Apple-Generation-Cancelling-Personalized-Customizable/product-reviews/B0BDHWDR12/ref=cm_cr_getr_d_paging_btm_next_6?ie=UTF8&reviewerType=all_reviews&pageNumber=6"
-url7 = "https://www.amazon.com/Apple-Generation-Cancelling-Personalized-Customizable/product-reviews/B0BDHWDR12/ref=cm_cr_getr_d_paging_btm_next_7?ie=UTF8&reviewerType=all_reviews&pageNumber=7"
-url8 = "https://www.amazon.com/Apple-Generation-Cancelling-Personalized-Customizable/product-reviews/B0BDHWDR12/ref=cm_cr_getr_d_paging_btm_next_8?ie=UTF8&reviewerType=all_reviews&pageNumber=8"
-url9 = "https://www.amazon.com/Apple-Generation-Cancelling-Personalized-Customizable/product-reviews/B0BDHWDR12/ref=cm_cr_getr_d_paging_btm_next_9?ie=UTF8&reviewerType=all_reviews&pageNumber=9"
+# Function to generate URLs for review pages
+def generate_review_urls(product_id, total_pages=9):
+    base_url = f"https://www.amazon.com/{product_id}/product-reviews/{product_id}/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews"
+    return [f"{base_url}&pageNumber={i}" for i in range(1, total_pages + 1)]
 
-URLs = [url1,url2,url3,url4,url5,url6,url7,url8,url9]
-
-Total_VeryPositive_Reviews = 0
-Total_Positive_Reviews = 0
-Total_Negative_Reviews = 0
-Total_VeryNegative_Reviews = 0
-Total_Neutral_Reviews = 0
-
-for i,url in enumerate(URLs):
-    print("\npage ", i+1,":") #Keeps track of page numbers
-    params = {'api_key': "ce7562064ab1029af3f879b124f5233a", 'url':url }
-    response = requests.get('http://api.scraperapi.com/',params=urlencode(params))
+# Function to scrape reviews and their titles
+def scrape_reviews(url):
+    params = {'api_key': "ce7562064ab1029af3f879b124f5233a", 'url': url}
+    response = requests.get('http://api.scraperapi.com/', params=urlencode(params))
     soup = BeautifulSoup(response.text, 'html.parser')
-    if i == 0:
-        #Scraping the star rating part
-        item = soup.find("span",{"data-hook":"rating-out-of-text"})
+
+    # Scrape star rating only from the first page
+    product_star_rating = None
+    if url == urls[0]:
+        item = soup.find("span", {"data-hook": "rating-out-of-text"})
         product_star_rating = item.get_text()
-    data_string = ""
-    #Scraping the titles for each page of reviews/url
-    titles = dict()
-    for review_number,item in enumerate(soup.find_all("a", "review-title")):
-          data_string = data_string + item.get_text()
-          if (review_number+1) not in titles:
-              titles[review_number+1] = data_string.strip()
-              data_string = ""
-          data_string = ""
-    print("\nTITLES: ",titles)
-    
-    #Scraping review content contained in each page corresponding to the titles above
-    reviews = []   
-    for item in soup.find_all("span", {"data-hook": "review-body"}):
-          data_string = data_string + item.get_text()
-          reviews.append(data_string)
-          data_string= ""
-   
 
-##Preprocessing and cleaning each review as follows:
-    
-    #Removing punctuation
-    punctuationfree_reviews =[review.translate(str.maketrans('','',string.punctuation)) for review in reviews]
-    
-    #Creating a list of tokens from the review
-    tokenized_reviews =[word_tokenize(review) for review in punctuationfree_reviews]
-    
-    
-    #Removing numerals and special characters from the tokens list as well as common stopwords
-    stopWords = set(nltk.corpus.stopwords.words('english'))
-    alphalowercase_reviews =[]
-    for review_tokens in tokenized_reviews:
-        alreview = []
-        for i in range(len(review_tokens)):
-            if review_tokens[i].isalpha() and review_tokens[i] not in stopWords:
-                r = review_tokens[i].lower()
-                alreview.append(r)
-        alphalowercase_reviews.append(alreview)
-                
-         
+    # Scraping review titles and contents
+    titles = {i + 1: item.get_text().strip() for i, item in enumerate(soup.find_all("a", "review-title"))}
+    reviews = [item.get_text() for item in soup.find_all("span", {"data-hook": "review-body"})]
 
-##Building a vocabulary of acceptable ADJECTIVES found in WordNet
-    adj_vocab = []
-    with open("wordnetAdj.txt") as WordNetinputfile:
-         for line in WordNetinputfile:
-            newTerm = line.split()
-            adj_vocab.append(newTerm[0])
-    WordNetinputfile.close()
-    
-    
-#Building a vocabulary of acceptable ADVERBS found in WordNet
-    # with open("wordnetAdv.txt") as WordNetinputfile:
-    #      for line in WordNetinputfile:
-    #         newTerm = line.split()
-    #         vocab.append(newTerm[0])
-    # WordNetinputfile.close()
+    return titles, reviews, product_star_rating
 
+# Function to preprocess reviews
+def preprocess_reviews(reviews):
+    stop_words = set(nltk.corpus.stopwords.words('english'))
+    lemmatizer = nltk.stem.WordNetLemmatizer()
+    punctuation_free_reviews = [review.translate(str.maketrans('', '', string.punctuation)) for review in reviews]
 
-    
-#Limiting reviews to just valid words as per adj_vocab from above
-    validated_reviews = []
-    for review in alphalowercase_reviews:
-        valid_review = []
-        
-        for token in review:
-            if token in vocab:
-                
-                valid_review.append(token)
-        validated_reviews.append(valid_review)
-    
-       
-##Sentiment Analysis of Reviews using sia.polarity scores
-    
+    tokenized_reviews = [word_tokenize(review) for review in punctuation_free_reviews]
+    cleaned_reviews = [[lemmatizer.lemmatize(token.lower()) for token in tokens if token.isalpha() and token.lower() not in stop_words] for tokens in tokenized_reviews]
+
+    return cleaned_reviews
+
+# Function to handle negations
+def handle_negations(reviews):
+    negated_reviews = []
+    for review in reviews:
+        temp_review = []
+        negation = False
+        for word in review:
+            if word in ["not", "no", "never"]:
+                negation = True
+            elif negation:
+                temp_review.append("not_" + word)
+                if word in [".", "!", "?"]:  # Reset negation at sentence end
+                    negation = False
+            else:
+                temp_review.append(word)
+        negated_reviews.append(temp_review)
+    return negated_reviews
+
+# Function to load adjective vocabulary
+def load_adjective_vocab(file_path):
+    with open(file_path) as file:
+        return [line.strip() for line in file]
+
+# Function to validate reviews against vocabulary
+def validate_reviews(reviews, vocab):
+    return [[token for token in review if token in vocab] for review in reviews]
+
+# Function for sentiment analysis
+def analyze_sentiment(reviews):
     sia = SentimentIntensityAnalyzer()
-    reviews_sentiment = []
-    
-    Vpos_reviews_perpage, Pos_reviews_perpage, Neg_reviews_perpage, Vneg_reviews_perpage, Neu_reviews_perpage = 0,0,0,0,0
-    
-    for review_number, review in enumerate(validated_reviews):
-        
-        i=0
-        for w in review:
-           w_sentiment = sia.polarity_scores(str(w))["compound"]
-           i+= w_sentiment
-           
-        review_sentiment_score =round(i/len(review),4)
-        k = review_sentiment_score
-        
-        if 0<k<=1:
-            print("Sentiment score = ",k, ", Review number",review_number+1,"is positive ")
-            Pos_reviews_perpage+= 1
-            
-        elif k>1:
-            print("Sentiment score = ",k, ", Review number",review_number+1,"is very positive ")
-            Vpos_reviews_perpage+= 1
-            
-        elif -1<=k<0:
-            print("Sentiment score = ",k, ", Review number",review_number+1,"is negative")
-            Neg_reviews_perpage+= 1
-            
-        elif k<-1:
-            print("Sentiment score = ",k, ", Review number",review_number+1,"is very negative")
-            Vneg_reviews_perpage+= 1
-            
+    sentiment_counts = {'very_positive': 0, 'positive': 0, 'negative': 0, 'very_negative': 0, 'neutral': 0}
+
+    for review in reviews:
+        if not review:
+            continue
+        score = sum(sia.polarity_scores(w)["compound"] for w in review) / len(review)
+        if score > 0.2:
+            sentiment_counts['very_positive'] += 1
+        elif score > 0.05:
+            sentiment_counts['positive'] += 1
+        elif score < -0.2:
+            sentiment_counts['very_negative'] += 1
+        elif score < -0.05:
+            sentiment_counts['negative'] += 1
         else:
-            print("Sentiment score = ",k, ", Review number",review_number+1,"is neutral")
-            Neu_reviews_perpage+= 1
-            
-        
-      
-    Total_VeryPositive_Reviews+= Vpos_reviews_perpage
-    Total_Positive_Reviews+= Pos_reviews_perpage
-    Total_Negative_Reviews+= Neg_reviews_perpage
-    Total_VeryNegative_Reviews+= Vneg_reviews_perpage
-    Total_Neutral_Reviews+= Neu_reviews_perpage   
-Total_Reviews = Total_VeryPositive_Reviews+Total_Positive_Reviews+Total_Negative_Reviews+Total_VeryNegative_Reviews+ Total_Neutral_Reviews
+            sentiment_counts['neutral'] += 1
 
-Overall_Positive_Reviews = "{:.4%}".format((Total_VeryPositive_Reviews+Total_Positive_Reviews)/Total_Reviews)
-Overall_Negative_Reviews = "{:.4%}".format((Total_VeryNegative_Reviews+Total_Negative_Reviews)/Total_Reviews)
-Overall_Neutral_Reviews = "{:.4%}".format((Total_Neutral_Reviews)/Total_Reviews)
+    return sentiment_counts
 
-print("\n")
-print(f"Total Reviews = {Total_Reviews}")
-print(f"Total Very Positive Reviews = {Total_VeryPositive_Reviews}\tTotal Positive Reviews = {Total_Positive_Reviews}")
-print(f"Total Very Negative Reviews = {Total_VeryNegative_Reviews}\tTotal Negative Reviews = {Total_Negative_Reviews}")
-print(f"Total Neutral Reviews = {Total_Neutral_Reviews}")
-print("\nOverall Positive Reviews: ",Overall_Positive_Reviews)      
-print("Overall Negative Reviews: ", Overall_Negative_Reviews)     
-print("Overall Neutral Reviews: ", Overall_Neutral_Reviews)  
-print("\n Compare to the product's star rating of ", product_star_rating)
-    
+# Main function to orchestrate the process
+def main():
+    download_nltk_resources()
 
+    product_id = "Apple-Generation-Cancelling-Personalized-Customizable/product-reviews/B0BDHWDR12"
+    urls = generate_review_urls(product_id)
+    product = "Apple AirPods Pro (2nd Generation) Wireless Earbuds".upper()
+    print("SENTIMENT ANALYSIS OF", product, "AMAZON'S REVIEWS\n")
 
-    
+    total_sentiment_counts = {'very_positive': 0, 'positive': 0, 'negative': 0, 'very_negative': 0, 'neutral': 0}
+
+    # Process each URL
+    for i, url in enumerate(urls):
+        print(f"\nPage {i + 1}:")
+        titles, reviews, product_star_rating = scrape_reviews(url)
+        print("\nTITLES:", titles)
+
+        cleaned_reviews = preprocess_reviews(reviews)
+        adj_vocab = load_adjective_vocab("wordnetAdj.txt")
+        validated_reviews = validate_reviews(cleaned_reviews, adj_vocab)
+        negated_reviews = handle_negations(validated_reviews)
+
+        sentiment_counts = analyze_sentiment(negated_reviews)
+        for key in total_sentiment_counts:
+            total_sentiment_counts[key] += sentiment_counts[key]
+
+    # Display overall sentiment analysis
+    total_reviews = sum(total_sentiment_counts.values())
+    print("\nTotal Reviews =", total_reviews)
+    print(
+        f"Total Very Positive Reviews = {total_sentiment_counts['very_positive']}\tTotal Positive Reviews = {total_sentiment_counts['positive']}")
+    print(
+        f"Total Very Negative Reviews = {total_sentiment_counts['very_negative']}\tTotal Negative Reviews = {total_sentiment_counts['negative']}")
+    print(f"Total Neutral Reviews = {total_sentiment_counts['neutral']}")
+
+    overall_positive_reviews = "{:.4%}".format(
+        (total_sentiment_counts['very_positive'] + total_sentiment_counts['positive']) / total_reviews)
+    overall_negative_reviews = "{:.4%}".format(
+        (total_sentiment_counts['very_negative'] + total_sentiment_counts['negative']) / total_reviews)
+    overall_neutral_reviews = "{:.4%}".format(total_sentiment_counts['neutral'] / total_reviews)
+
+    print("\nOverall Positive Reviews:", overall_positive_reviews)
+    print("Overall Negative Reviews:", overall_negative_reviews)
+    print("Overall Neutral Reviews:", overall_neutral_reviews)
+    print("\nCompare to the product's star rating of", product_star_rating)
+
+# Run the main function
+if __name__ == "__main__":
+    main()
+
