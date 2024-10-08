@@ -1,140 +1,16 @@
-SENTIMENT ANALYSIS OF APPLE AIRPODS PRO (2ND GENERATION) WIRELESS EARBUDS AMAZON'S REVIEWS
+# Sample output for a sample product
+SENTIMENT ANALYSIS OF APPLE-GENERATION-CANCELLING-TRANSPARENCY-PERSONALIZED AMAZON'S REVIEWS
 
 
-page  1 :
+Total Reviews = 10
+Total Very Positive Reviews = 0	Total Positive Reviews = 9
+Total Very Negative Reviews = 1	Total Negative Reviews = 0
+Total Neutral Reviews = 0
 
-TITLES:  {1: 'Noise cancelation works well.  Transparency mode does not.', 2: 'A big leap forward in earbud tech!', 3: 'Overall excellent with ANC and great audio', 4: 'Definitely an Upgrade over the AirPods Pro 1', 5: 'First set returned 2nd set looking good', 6: 'Big improvement over first gen pro', 7: 'Great Improvements Over Original Airpods Pro and Better Than New Bose', 8: 'The king of wireless earbuds', 9: 'Sound', 10: 'Substantial Upgrade Over 1st Gen'}
-Sentiment score =  0.0388 , Review number 1 is positive 
-Sentiment score =  0.0398 , Review number 2 is positive 
-Sentiment score =  0.0525 , Review number 3 is positive 
-Sentiment score =  0.0735 , Review number 4 is positive 
-Sentiment score =  0.0236 , Review number 5 is positive 
-Sentiment score =  0.2444 , Review number 6 is positive 
-Sentiment score =  0.093 , Review number 7 is positive 
-Sentiment score =  0.1844 , Review number 8 is positive 
-Sentiment score =  0.0795 , Review number 9 is positive 
-Sentiment score =  -0.0162 , Review number 10 is negative
+Overall Positive Reviews: 90.0000%
+Overall Negative Reviews: 10.0000%
+Overall Neutral Reviews: 0.0000%
 
-page  2 :
+Compare to the product's star rating of 4.7 out of 5 and review titles below:
 
-TITLES:  {1: 'Pixel 6 users read this', 2: 'Can be great...', 3: 'Drastic improvement and worth the upgrade!', 4: 'AirPods Pro vs AirPods Pro 2: There’s improvement and it’s big!', 5: 'Nice', 6: 'Some nice improvements over previous AirPods Pro', 7: 'They improved the sound, and noise reduction', 8: 'Seriously improved', 9: 'Subtle Quality of Life improvements from Gen 1 Airpods Pro', 10: 'Amazing product'}
-Sentiment score =  0.0197 , Review number 1 is positive 
-Sentiment score =  0.0564 , Review number 2 is positive 
-Sentiment score =  0.069 , Review number 3 is positive 
-Sentiment score =  0.0696 , Review number 4 is positive 
-Sentiment score =  0.1355 , Review number 5 is positive 
-Sentiment score =  0.092 , Review number 6 is positive 
-Sentiment score =  0.1073 , Review number 7 is positive 
-Sentiment score =  0.0113 , Review number 8 is positive 
-Sentiment score =  0.0103 , Review number 9 is positive 
-Sentiment score =  0.0368 , Review number 10 is positive 
-
-page  3 :
-
-TITLES:  {1: 'Doing what they do best; many improvements', 2: 'Amazing, but all true', 3: 'Way better than I was expecting!', 4: 'These will change your life!', 5: 'Unmatchable Sound', 6: 'Hard to believe it but there is actually a clear difference between the Gen 1 and Gen 2 Pros', 7: 'Worth the money to me!', 8: 'Yup. They are as good as they hype.', 9: 'So Closing to Being Perfect', 10: 'One of the best if not the best wireless earbuds'}
-Sentiment score =  0.0832 , Review number 1 is positive 
-Sentiment score =  0.138 , Review number 2 is positive 
-Sentiment score =  0.1442 , Review number 3 is positive 
-Sentiment score =  -0.0109 , Review number 4 is negative
-Sentiment score =  0.0705 , Review number 5 is positive 
-Sentiment score =  0.0781 , Review number 6 is positive 
-Sentiment score =  0.0389 , Review number 7 is positive 
-Sentiment score =  0.1175 , Review number 8 is positive 
-Sentiment score =  0.0948 , Review number 9 is positive 
-Sentiment score =  0.1002 , Review number 10 is positive 
-
-page  4 :
-
-TITLES:  {1: 'Best Headphones for the 💵.', 2: "Didn't like the rubber tips", 3: 'The best wireless earphones just got better', 4: 'Your Fit May Vary', 5: 'Fan boy in decline impressed again', 6: 'Unbelievable noise canceling, stellar Dolby Atmos sound!', 7: 'Worth the upgrade from the 1st generation', 8: 'Yes ....', 9: 'Sleeping on a plane has never been better', 10: 'Way better than anticipated'}
-Sentiment score =  0.0622 , Review number 1 is positive 
-Sentiment score =  0.0031 , Review number 2 is positive 
-Sentiment score =  0.1753 , Review number 3 is positive 
-Sentiment score =  0.1148 , Review number 4 is positive 
-Sentiment score =  0.1295 , Review number 5 is positive 
-Sentiment score =  0.0396 , Review number 6 is positive 
-Sentiment score =  0.0732 , Review number 7 is positive 
-Sentiment score =  0.1109 , Review number 8 is positive 
-Sentiment score =  0.0813 , Review number 9 is positive 
-Sentiment score =  0.0744 , Review number 10 is positive 
-
-page  5 :
-
-TITLES:  {1: 'Great sound quality', 2: 'World-class noise canceling and okay sound', 3: 'Disconnect issues...EDIT', 4: 'Even better ANC than first gen', 5: 'Worth it for the Improved Noise Canceling', 6: 'Noise cancellation is a game changer!', 7: 'Great Headphones', 8: 'My new favorite earbuds', 9: 'The best yet!', 10: "They're not really great."}
-Sentiment score =  0.1082 , Review number 1 is positive 
-Sentiment score =  0.0499 , Review number 2 is positive 
-Sentiment score =  -0.0023 , Review number 3 is negative
-Sentiment score =  0.029 , Review number 4 is positive 
-Sentiment score =  0.13 , Review number 5 is positive 
-Sentiment score =  0.1076 , Review number 6 is positive 
-Sentiment score =  0.1414 , Review number 7 is positive 
-Sentiment score =  0.1412 , Review number 8 is positive 
-Sentiment score =  0.1985 , Review number 9 is positive 
-Sentiment score =  0.0831 , Review number 10 is positive 
-
-page  6 :
-
-TITLES:  {1: 'Excited about it', 2: 'Slightly better AirPods Pro', 3: 'Better than original Air Pods Pro.', 4: 'Phenomenal!!!', 5: 'HUGE improvement over the original Pro’s', 6: 'Awesome AirPods', 7: 'Best head phones for apple lovers', 8: 'Worth the money!', 9: 'It works Great', 10: 'Worth. It. Trust. Me.'}
-Sentiment score =  0.0863 , Review number 1 is positive 
-Sentiment score =  0.1669 , Review number 2 is positive 
-Sentiment score =  0.1307 , Review number 3 is positive 
-Sentiment score =  0.0748 , Review number 4 is positive 
-Sentiment score =  0.0407 , Review number 5 is positive 
-Sentiment score =  0.0487 , Review number 6 is positive 
-Sentiment score =  0.082 , Review number 7 is positive 
-Sentiment score =  -0.022 , Review number 8 is negative
-Sentiment score =  0.1291 , Review number 9 is positive 
-Sentiment score =  0.0559 , Review number 10 is positive 
-
-page  7 :
-
-TITLES:  {1: 'Not bad overall, but has issues', 2: 'Amazing!', 3: 'Better than I expected', 4: 'Awesome!!!', 5: 'Best AirPods ever', 6: 'Overall slightly better than the 1st gen.', 7: 'Superb', 8: 'Excellent audio quality', 9: 'Much Better than Anticipated!', 10: 'A notch up from 1st gen'}
-Sentiment score =  0.0338 , Review number 1 is positive 
-Sentiment score =  0.1041 , Review number 2 is positive 
-Sentiment score =  0.0948 , Review number 3 is positive 
-Sentiment score =  0.1846 , Review number 4 is positive 
-Sentiment score =  0.1252 , Review number 5 is positive 
-Sentiment score =  0.2227 , Review number 6 is positive 
-Sentiment score =  0.0455 , Review number 7 is positive 
-Sentiment score =  0.1383 , Review number 8 is positive 
-Sentiment score =  0.0697 , Review number 9 is positive 
-Sentiment score =  0.0944 , Review number 10 is positive 
-
-page  8 :
-
-TITLES:  {1: 'Great earbuds', 2: 'There’s really nothing to say', 3: 'Better than Doing Mushrooms', 4: "THEY'RE LEGIT!!", 5: 'Amazing earbuds. Can participate on a', 6: 'Amazing!', 7: 'Brilliant product!', 8: 'Mostly perfect, but..', 9: 'Thank god for the XS eartips', 10: 'Comfortable for small ears'}
-Sentiment score =  0.2292 , Review number 1 is positive 
-Sentiment score =  0.0101 , Review number 2 is positive 
-Sentiment score =  0.022 , Review number 3 is positive 
-Sentiment score =  0.3058 , Review number 4 is positive 
-Sentiment score =  0.0509 , Review number 5 is positive 
-Sentiment score =  0.0964 , Review number 6 is positive 
-Sentiment score =  0.123 , Review number 7 is positive 
-Sentiment score =  0.0751 , Review number 8 is positive 
-Sentiment score =  0.1191 , Review number 9 is positive 
-Sentiment score =  0.12 , Review number 10 is positive 
-
-page  9 :
-
-TITLES:  {1: 'A much improved version..but', 2: 'Huge improvement', 3: 'Noise Cancellation is extraordinary!', 4: '😘🥰😍 I’m in love.', 5: 'Better than the 1st Gen in every single way', 6: 'Ok upgrade from gen 1', 7: 'Fantastic', 8: 'Worth the upgrade', 9: 'Best earbuds in the market', 10: 'Just Amazing 🤩'}
-Sentiment score =  0.0929 , Review number 1 is positive 
-Sentiment score =  0.0862 , Review number 2 is positive 
-Sentiment score =  -0.0068 , Review number 3 is negative
-Sentiment score =  0.1101 , Review number 4 is positive 
-Sentiment score =  0.126 , Review number 5 is positive 
-Sentiment score =  0.1697 , Review number 6 is positive 
-Sentiment score =  0.0 , Review number 7 is neutral
-Sentiment score =  0.1202 , Review number 8 is positive 
-Sentiment score =  0.0232 , Review number 9 is positive 
-Sentiment score =  0.1717 , Review number 10 is positive 
-
-
-Total Reviews = 90
-Total Very Positive Reviews = 0	Total Positive Reviews = 84
-Total Very Negative Reviews = 0	Total Negative Reviews = 5
-Total Neutral Reviews = 1
-
-Overall Positive Reviews:  93.3333%
-Overall Negative Reviews:  5.5556%
-Overall Neutral Reviews:  1.1111%
-
- Compare to the product's star rating of  4.7 out of 5
+{1: '5.0 out of 5 stars\nReally really really good.***Update***', 2: '5.0 out of 5 stars\nAmazing Sound and Noise Cancelling for the Price!', 3: '5.0 out of 5 stars\nAmazing Sound and Features – Worth Every Penny!', 4: '5.0 out of 5 stars\nAmazing headphones with stunning noise cancelation and shameful iOS exclusivity', 5: '5.0 out of 5 stars\nperfect pods', 6: '5.0 out of 5 stars\nCompletely satisfied,  love the updates to the Gen2.', 7: '4.0 out of 5 stars\nAbsolutely worth it, to me.', 8: '5.0 out of 5 stars\nExcellent', 9: '5.0 out of 5 stars\nBlocking Out Life’s Chaos, One Noise-Cancelled Moment at a Time', 10: '5.0 out of 5 stars\nThese replaced my 1st gen'}
