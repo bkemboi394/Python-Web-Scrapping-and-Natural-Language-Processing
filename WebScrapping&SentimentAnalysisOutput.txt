@@ -1,16 +1,24 @@
-# Sample output for a sample product
+Enter the product name (e.g., 'Apple-Generation-Cancelling-Transparency-Personalized'): Apple-Generation-Cancelling-Transparency-Personalized
+Enter the product ID (e.g., 'B0CHWRXH8B'): B0CHWRXH8B
+Enter your ScraperAPI key: 8271b4f1634a7df368c29aa6959ee4c1
+Scraping page 1...
+Scraping page 2...
+Scraping page 3...
+Scraping page 4...
+Scraping page 5...
+Scraping page 6...
 SENTIMENT ANALYSIS OF APPLE-GENERATION-CANCELLING-TRANSPARENCY-PERSONALIZED AMAZON'S REVIEWS
 
 
-Total Reviews = 10
-Total Very Positive Reviews = 0	Total Positive Reviews = 9
-Total Very Negative Reviews = 1	Total Negative Reviews = 0
-Total Neutral Reviews = 0
+Total Reviews = 58
+Total Very Positive Reviews = 4	Total Positive Reviews = 50
+Total Very Negative Reviews = 1	Total Negative Reviews = 1
+Total Neutral Reviews = 2
 
-Overall Positive Reviews: 90.0000%
-Overall Negative Reviews: 10.0000%
-Overall Neutral Reviews: 0.0000%
+Overall Positive Reviews: 93.1034%
+Overall Negative Reviews: 3.4483%
+Overall Neutral Reviews: 3.4483%
 
 Compare to the product's star rating of 4.7 out of 5 and review titles below:
 
-{1: '5.0 out of 5 stars\nReally really really good.***Update***', 2: '5.0 out of 5 stars\nAmazing Sound and Noise Cancelling for the Price!', 3: '5.0 out of 5 stars\nAmazing Sound and Features – Worth Every Penny!', 4: '5.0 out of 5 stars\nAmazing headphones with stunning noise cancelation and shameful iOS exclusivity', 5: '5.0 out of 5 stars\nperfect pods', 6: '5.0 out of 5 stars\nCompletely satisfied,  love the updates to the Gen2.', 7: '4.0 out of 5 stars\nAbsolutely worth it, to me.', 8: '5.0 out of 5 stars\nExcellent', 9: '5.0 out of 5 stars\nBlocking Out Life’s Chaos, One Noise-Cancelled Moment at a Time', 10: '5.0 out of 5 stars\nThese replaced my 1st gen'}
+{61: 'If you want a seamless Apple experience, then AirPods Pro are a must.', 62: 'Worth the upgrade', 63: 'Great sound quality', 64: 'Beyond Wireless', 65: 'Case loses charge sooner than 1st Gen.', 66: 'They last for hours', 67: 'Good 👍', 68: 'AMAZING', 69: 'Excelentes audífonos, pero defectuosos', 70: 'Somewhat finicky', 31: 'HUGE improvement over my Bose Quiet Comfort 35 headphones', 32: 'Big upgrade from 1st generation', 33: 'Works well!', 34: 'great price.  worthwhile investment.', 35: "Durable! Even if you're on Android or use them with a PC, they're great!", 36: 'Great Earbuds', 37: 'Perfect!', 38: 'Third Pair of the Pro - Still a champ', 39: 'Nice', 40: 'Great soundproofing', 41: 'Other than glaring white, they’re kind of perfect.', 42: 'Good pair of earbuds', 43: 'Ok… not a hi-5 item from Apple', 44: 'Of course it’s good! It’s Apple!', 45: 'Built well, long battery life', 46: 'Amazing for everything.', 47: 'Phenomenal AirPods', 48: 'LOVE THEM!', 49: 'Solid sound quality', 50: 'People on work calls keep asking me what my headset is - because it sounds so good', 51: 'My second one', 52: 'AirPods', 53: '👍', 54: 'AirPods Pro 2 - Excellent Sound', 55: 'Good but could be better with Android.', 56: 'Perfect!', 57: 'Great sound', 58: 'serious improvement to my life', 59: 'Great', 60: 'Buy for convience, not sound', 21: 'THESE ROCK!', 22: 'Tough', 23: "So good it's annoying. Let me explain.", 24: 'Absolutely Thrilled with My AirPods Pro', 25: "It's amazing if you like the Apple ecosystem", 26: 'Love them', 27: 'Comfortable and really nice', 28: 'Great Sound and Convenience', 29: 'Battery', 30: 'Great prime deal', 1: 'Really really really good.***Update***', 2: 'Amazing Sound and Noise Cancelling for the Price!', 3: 'Amazing Sound and Features – Worth Every Penny!', 4: 'Amazing headphones with stunning noise cancelation and shameful iOS exclusivity', 5: 'perfect pods', 6: 'Completely satisfied,  love the updates to the Gen2.', 7: 'Absolutely worth it, to me.', 8: 'Excellent', 9: 'Blocking Out Life’s Chaos, One Noise-Cancelled Moment at a Time', 10: 'These replaced my 1st gen'}
