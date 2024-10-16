@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-# Importing necessary modules
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlencode
@@ -10,14 +7,16 @@ from nltk.stem import WordNetLemmatizer
 from nltk.sentiment import SentimentIntensityAnalyzer
 from nltk.corpus import wordnet
 import string
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 
 # Class for managing the review scraping process
 class ReviewScraper:
-    def __init__(self, product,product_id, scraper_api_key):
+    def __init__(self, product, product_id, scraper_api_key):
         self.product = product
         self.product_id = product_id
         self.scraper_api_key = scraper_api_key
-        self.base_url =  self.base_url = f"https://www.amazon.com/{product}/product-reviews/{product_id}/ref=cm_cr_getr_d_paging_btm_prev_1?ie=UTF8&reviewerType=all_reviews&pageNumber=1"
+        self.base_url = f"https://www.amazon.com/{product}/product-reviews/{product_id}/ref=cm_cr_getr_d_paging_btm_prev_1?ie=UTF8&reviewerType=all_reviews&pageNumber=1"
 
     def get_soup(self, url):
         # Request the page using ScraperAPI
@@ -34,62 +33,63 @@ class ReviewScraper:
             return soup
         else:
             print(f"Error fetching page: {response.status_code}")
-            #print(f"Response: {response.text}")  # Print response for debugging
             return None
 
-    def scrape_reviews(self):
+    # Concurrently scrape each page and return the results in order
+    def scrape_reviews_concurrently(self, total_pages):
         reviews = []
         titles = {}
-        page_num = 1
-        current_url = self.base_url
         product_star_rating = None
-        j = 0
-        while current_url:
+
+        def scrape_page(page_num):
+            current_url = f"https://www.amazon.com/{self.product}/product-reviews/{self.product_id}/ref=cm_cr_getr_d_paging_btm_prev_{page_num}?ie=UTF8&reviewerType=all_reviews&pageNumber={page_num}"
             print(f"Scraping page {page_num}...")  # To track progress
-
             soup = self.get_soup(current_url)
-            #print(soup.prettify())
+            if not soup:
+                return page_num, None, None, None
 
-            if soup is None:
-                print(f"Failed to scrape page {page_num}")
-                break
-
-            # Scrape product star rating (only from the first page)
             if page_num == 1:
+                # Scrape the star rating only from the first page
                 product_star_rating_element = soup.find("span", {"data-hook": "rating-out-of-text"})
                 if product_star_rating_element:
-                    product_star_rating = product_star_rating_element.get_text().strip()
+                    star_rating = product_star_rating_element.get_text().strip()
                 else:
-                    print("Star rating not found.")
+                    star_rating = "Not found"
+            else:
+                star_rating = None
 
             # Scrape review titles and contents
-            review_titles = {i + 1 + j: item.get_text().strip() for i, item in
-                             enumerate(soup.find_all("a", "review-title"))}
+            review_titles = {i + 1: item.get_text().strip().split('\n')[1] for i, item in enumerate(soup.find_all("a", "review-title"))}
+
             review_contents = [item.get_text().strip() for item in soup.find_all("span", {"data-hook": "review-body"})]
 
-            titles.update(review_titles)
-            j += 1
-            print(len(titles))
-            reviews.extend(review_contents)
-            print(len(reviews))
+            return page_num, review_titles, review_contents, star_rating
 
-            # Check for the next page and update the URL
-            next_page_element = soup.find("link", rel="next")
-            if next_page_element and 'href' in next_page_element.attrs:
-                next_page_url = next_page_element['href']
-                # Construct the full URL for the next page
-                current_url = next_page_url
-                page_num += 1
-            else:
-                print("No more pages found.")
-                current_url = None  # Exit the loop if there are no more pages
+        # Use ThreadPoolExecutor for concurrent scraping
+        with ThreadPoolExecutor() as executor:
+            future_to_page = {executor.submit(scrape_page, page_num): page_num for page_num in range(1, total_pages + 1)}
+
+            for future in as_completed(future_to_page):
+                page_num = future_to_page[future]
+                try:
+                    page_num, page_titles, page_reviews, star_rating = future.result()
+
+                    # Add to global reviews and titles, maintaining the order
+                    if page_titles and page_reviews:
+                        titles.update({i + (page_num - 1) * 10: title for i, title in page_titles.items()})
+                        reviews.extend(page_reviews)
+                    if star_rating and page_num == 1:
+                        product_star_rating = star_rating
+
+                except Exception as exc:
+                    print(f"Page {page_num} generated an exception: {exc}")
 
         return titles, reviews, product_star_rating
+
 
 class SentimentAnalyzer:
     def __init__(self):
         self.sia = SentimentIntensityAnalyzer()
-
 
     @staticmethod
     def preprocess_reviews(reviews):
@@ -100,8 +100,8 @@ class SentimentAnalyzer:
         # Applying lemmatization in the preprocessing step
         lemmatizer = WordNetLemmatizer()
         cleaned_reviews = [[lemmatizer.lemmatize(token.lower()) for token in tokens if
-                               token.isalpha() and token.lower() not in stop_words]
-                              for tokens in tokenized_reviews]
+                            token.isalpha() and token.lower() not in stop_words]
+                           for tokens in tokenized_reviews]
         return cleaned_reviews
 
     @staticmethod
@@ -134,10 +134,10 @@ class SentimentAnalyzer:
 
         return sentiment_counts
 
-#Class for reporting the results
+
 class ReportGenerator:
     @staticmethod
-    def display_results(total_sentiment_counts, product_star_rating,titles):
+    def display_results(total_sentiment_counts, product_star_rating, titles):
         total_reviews = sum(total_sentiment_counts.values())
         print("\nTotal Reviews =", total_reviews)
         print(
@@ -152,7 +152,6 @@ class ReportGenerator:
             (total_sentiment_counts['very_negative'] + total_sentiment_counts['negative']) / total_reviews)
         overall_neutral_reviews = "{:.4%}".format(total_sentiment_counts['neutral'] / total_reviews)
 
-
         print("\nOverall Positive Reviews:", overall_positive_reviews)
         print("Overall Negative Reviews:", overall_negative_reviews)
         print("Overall Neutral Reviews:", overall_neutral_reviews)
@@ -160,27 +159,18 @@ class ReportGenerator:
         print(titles)
 
 
-
-
-
-
 # Example usage
 def main():
-    #nltk.download("all")
-
-    #Testing the code on a product from Amazon
-
-    
     product = input("Enter the product name (e.g., 'Apple-Generation-Cancelling-Transparency-Personalized'): ")
     product_id = input("Enter the product ID (e.g., 'B0CHWRXH8B'): ")
     scraper_api_key = input("Enter your ScraperAPI key: ")
 
-    scraper = ReviewScraper(product,product_id, scraper_api_key)
-    titles, reviews, product_star_rating = scraper.scrape_reviews()
+    scraper = ReviewScraper(product, product_id, scraper_api_key)
+
+    # Scrape reviews concurrently from 5 pages as an example
+    titles, reviews, product_star_rating = scraper.scrape_reviews_concurrently(total_pages=5)
 
     print(f"SENTIMENT ANALYSIS OF {product.upper()} AMAZON'S REVIEWS\n")
-    #print(reviews)
-
 
     sentiment_analyzer = SentimentAnalyzer()
 
@@ -196,13 +186,10 @@ def main():
     # Analyze sentiment of the reviews
     sentiment_counts = sentiment_analyzer.analyze_sentiment(validated_reviews)
 
-    reportGenerator = ReportGenerator()
-
-    reportGenerator.display_results(sentiment_counts, product_star_rating,titles)
-
-
+    # Generate the report
+    report_generator = ReportGenerator()
+    report_generator.display_results(sentiment_counts, product_star_rating, titles)
 
 
 if __name__ == "__main__":
     main()
-
