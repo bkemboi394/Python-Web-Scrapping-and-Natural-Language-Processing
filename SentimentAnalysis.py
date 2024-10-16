@@ -8,6 +8,11 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 from nltk.corpus import wordnet
 import string
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from transformers import BertTokenizer, BertForSequenceClassification, Trainer, TrainingArguments
+from datasets import load_dataset
+import torch
+import json
+import os
 
 
 # Class for managing the review scraping process
@@ -19,7 +24,7 @@ class ReviewScraper:
         self.base_url = f"https://www.amazon.com/{product}/product-reviews/{product_id}/ref=cm_cr_getr_d_paging_btm_prev_1?ie=UTF8&reviewerType=all_reviews&pageNumber=1"
 
     def get_soup(self, url):
-        # Request the page using ScraperAPI
+        # Requesting the page using ScraperAPI
         params = {
             'api_key': self.scraper_api_key,
             'url': url,
@@ -27,7 +32,7 @@ class ReviewScraper:
         }
         response = requests.get(f'http://api.scraperapi.com/', params=urlencode(params))
 
-        # Check if the request was successful
+        # Checking if the request was successful
         if response.status_code == 200:
             soup = BeautifulSoup(response.content, 'html.parser')
             return soup
@@ -35,7 +40,7 @@ class ReviewScraper:
             print(f"Error fetching page: {response.status_code}")
             return None
 
-    # Concurrently scrape each page and return the results in order
+    # Concurrently scraping each page and returning the results in order
     def scrape_reviews_concurrently(self, total_pages):
         reviews = []
         titles = {}
@@ -49,7 +54,7 @@ class ReviewScraper:
                 return page_num, None, None, None
 
             if page_num == 1:
-                # Scrape the star rating only from the first page
+                # Scraping the star rating only from the first page
                 product_star_rating_element = soup.find("span", {"data-hook": "rating-out-of-text"})
                 if product_star_rating_element:
                     star_rating = product_star_rating_element.get_text().strip()
@@ -58,14 +63,14 @@ class ReviewScraper:
             else:
                 star_rating = None
 
-            # Scrape review titles and contents
+            # Scraping review titles and contents
             review_titles = {i + 1: item.get_text().strip().split('\n')[1] for i, item in enumerate(soup.find_all("a", "review-title"))}
 
             review_contents = [item.get_text().strip() for item in soup.find_all("span", {"data-hook": "review-body"})]
 
             return page_num, review_titles, review_contents, star_rating
 
-        # Use ThreadPoolExecutor for concurrent scraping
+        # Using ThreadPoolExecutor for concurrent scraping
         with ThreadPoolExecutor() as executor:
             future_to_page = {executor.submit(scrape_page, page_num): page_num for page_num in range(1, total_pages + 1)}
 
@@ -74,7 +79,7 @@ class ReviewScraper:
                 try:
                     page_num, page_titles, page_reviews, star_rating = future.result()
 
-                    # Add to global reviews and titles, maintaining the order
+                    # Adding to global reviews and titles, maintaining the order
                     if page_titles and page_reviews:
                         titles.update({i + (page_num - 1) * 10: title for i, title in page_titles.items()})
                         reviews.extend(page_reviews)
@@ -86,7 +91,29 @@ class ReviewScraper:
 
         return titles, reviews, product_star_rating
 
+    @staticmethod
+    def save_reviews_to_file(file_path, titles, reviews, star_rating):
+        data = {
+            "star_rating": star_rating,
+            "titles": titles,
+            "reviews": reviews
+        }
+        with open(file_path, 'w') as f:
+            json.dump(data, f, indent=4)
+        print(f"Reviews saved to {file_path}")
 
+    @staticmethod
+    def load_reviews_from_file(file_path):
+        if os.path.exists(file_path):
+            with open(file_path, 'r') as f:
+                data = json.load(f)
+            print(f"Loaded reviews from {file_path}")
+            return data['titles'], data['reviews'], data['star_rating']
+        else:
+            print(f"No file found at {file_path}")
+            return None, None, None
+
+# SIA sentiment Analysis logic
 class SentimentAnalyzer:
     def __init__(self):
         self.sia = SentimentIntensityAnalyzer()
@@ -135,9 +162,40 @@ class SentimentAnalyzer:
         return sentiment_counts
 
 
+
+# Fine-tuning BERT
+class BERTFineTuner:
+    def __init__(self):
+        self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+        self.model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=2)
+        self.dataset = load_dataset('amazon_polarity')
+
+    def tokenize_function(self, examples):
+        return self.tokenizer(examples['content'], padding="max_length", truncation=True)
+
+    def fine_tune(self):
+        tokenized_datasets = self.dataset.map(self.tokenize_function, batched=True)
+        training_args = TrainingArguments(output_dir="./results", evaluation_strategy="epoch",
+                                          per_device_train_batch_size=8, num_train_epochs=3)
+        trainer = Trainer(model=self.model, args=training_args, train_dataset=tokenized_datasets['train'],
+                          eval_dataset=tokenized_datasets['test'])
+        trainer.train()
+
+    def classify_reviews(self, reviews):
+        inputs = self.tokenizer(reviews, return_tensors="pt", padding=True, truncation=True)
+        outputs = self.model(**inputs)
+        predictions = torch.argmax(outputs.logits, dim=-1)
+        return ["positive" if pred == 1 else "negative" for pred in predictions]
+
+
+
+
+
+# Results generator for both SIA and BERT
 class ReportGenerator:
     @staticmethod
-    def display_results(total_sentiment_counts, product_star_rating, titles):
+    def display_SIA_results(total_sentiment_counts, product_star_rating, titles):
+        print("SIA Results:\n")
         total_reviews = sum(total_sentiment_counts.values())
         print("\nTotal Reviews =", total_reviews)
         print(
@@ -158,8 +216,14 @@ class ReportGenerator:
         print("\nCompare to the product's star rating of", product_star_rating, "and review titles below:\n")
         print(titles)
 
+    @staticmethod
+    def display_BERT_results(titles, predictions):
+        print("\n BERT Results:\n")
+        for idx, title in titles.items():
+            print(f"Review {idx}: {title} -> {predictions[idx - 1]}")
 
-# Example usage
+
+
 def main():
     product = input("Enter the product name (e.g., 'Apple-Generation-Cancelling-Transparency-Personalized'): ")
     product_id = input("Enter the product ID (e.g., 'B0CHWRXH8B'): ")
@@ -167,8 +231,17 @@ def main():
 
     scraper = ReviewScraper(product, product_id, scraper_api_key)
 
-    # Scrape reviews concurrently from 5 pages as an example
-    titles, reviews, product_star_rating = scraper.scrape_reviews_concurrently(total_pages=5)
+
+    file_path = f"{product_id}_reviews.json"
+
+    # First, trying to load reviews from the file
+    titles, reviews, product_star_rating = scraper.load_reviews_from_file(file_path)
+
+    # If no file exists, scrape the reviews and save them to the file
+    if titles is None or reviews is None:
+        titles, reviews, product_star_rating = scraper.scrape_reviews_concurrently(total_pages=10)
+        print(product_star_rating)
+        scraper.save_reviews_to_file(file_path, titles, reviews, product_star_rating)
 
     print(f"SENTIMENT ANALYSIS OF {product.upper()} AMAZON'S REVIEWS\n")
 
@@ -186,10 +259,25 @@ def main():
     # Analyze sentiment of the reviews
     sentiment_counts = sentiment_analyzer.analyze_sentiment(validated_reviews)
 
-    # Generate the report
+    # Generate the SIA report
     report_generator = ReportGenerator()
-    report_generator.display_results(sentiment_counts, product_star_rating, titles)
+    report_generator.display_SIA_results(sentiment_counts, product_star_rating, titles)
+
+
+    # Fine-tune BERT model on Amazon Polarity dataset
+    fine_tuner = BERTFineTuner()
+    fine_tuner.fine_tune()
+
+    # Apply the fine-tuned BERT model to classify sentiment on scraped reviews
+    predictions = fine_tuner.classify_reviews(reviews)
+
+    # Generate BERT report
+    report_generator = ReportGenerator()
+    report_generator.display_BERT_results(titles, predictions)
+
 
 
 if __name__ == "__main__":
     main()
+
+
